@@ -72,6 +72,8 @@ export default function SocratesVoiceControl({
   const [errorMsg, setErrorMsg] = useState('');
   const recognitionRef = useRef(null);
   const timerRef = useRef(null);
+  // Auto-retry budget for transient Chrome speech-socket drops ('network').
+  const retryRef = useRef(0);
 
   const langCode = LANG_CODES[language] || 'en-IN';
   const t = VOICE_LABELS[language] || VOICE_LABELS.English;
@@ -172,7 +174,7 @@ export default function SocratesVoiceControl({
   };
 
   // 2. SPEAK (Speech-to-Text)
-  const handleSpeakToggle = (e) => {
+  const handleSpeakToggle = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -202,43 +204,64 @@ export default function SocratesVoiceControl({
       return;
     }
 
+    // Fail fast when plainly offline — Chrome's recognizer streams to
+    // Google servers, so it can never work without internet.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      setErrorMsg('You appear to be offline. Voice recognition needs an internet connection.');
+      clearError();
+      return;
+    }
+
+    // Explicitly warm up microphone permissions to prevent Chrome Speech API network drop
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempStream.getTracks().forEach((track) => track.stop());
+      }
+    } catch (micErr) {
+      console.warn('Microphone permission check error:', micErr);
+      setErrorMsg('Microphone access denied. Please allow microphone permissions.');
+      clearError();
+      return;
+    }
+
     try {
       const recognition = new SpeechRecognition();
       recognition.lang = langCode;
-      recognition.continuous = true;
-      recognition.interimResults = false;
+      recognition.continuous = false; // Disable continuous to avoid Chrome webkitSpeech API network socket drop
+      recognition.interimResults = true;
 
       recognition.onstart = () => {
         setActiveVoiceId(`${questionId}_speak`);
 
-        // Automatically stop recording after 5 seconds
+        // Automatically stop recording after 7 seconds
         clearSpeakTimer();
         timerRef.current = setTimeout(() => {
           if (recognitionRef.current) {
             try { recognitionRef.current.stop(); } catch (err) {}
           }
           setActiveVoiceId(null);
-        }, 5000);
+        }, 7000);
       };
 
       recognition.onresult = (event) => {
-        let finalTranscript = '';
+        // A result means the speech socket is healthy — restore retry budget.
+        retryRef.current = 0;
+        let transcript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          }
+          transcript += event.results[i][0].transcript;
         }
 
-        if (!finalTranscript.trim()) return;
+        if (!transcript.trim()) return;
 
-        const textSpoken = finalTranscript.trim();
+        const textSpoken = transcript.trim();
 
         if (isNumberField) {
           // Parse rating 0-10
           let foundNum = null;
           const words = textSpoken.toLowerCase().split(/\s+/);
           for (const w of words) {
-            const clean = w.replace(/[^a-zA-Z0-9\u0900-\u097F\u0980-\u09FF\u0B80-\u0BFF]/g, '');
+            const clean = w.replace(/[^\p{L}\p{N}]/gu, '');
             if (NUMBER_MAP[clean] !== undefined) {
               foundNum = NUMBER_MAP[clean];
               break;
@@ -269,14 +292,12 @@ export default function SocratesVoiceControl({
               }
             }
             if (!matchedOption) {
-              // Append to custom value
-              const updated = value ? `${value} ${textSpoken}` : textSpoken;
-              onValueChange(updated);
+              // Replace or set value
+              onValueChange(textSpoken);
             }
           } else {
-            // Append to value preserving existing typed text
-            const updated = value ? `${value} ${textSpoken}` : textSpoken;
-            onValueChange(updated);
+            // Append or set value
+            onValueChange(textSpoken);
           }
         }
       };
@@ -284,7 +305,32 @@ export default function SocratesVoiceControl({
       recognition.onerror = (event) => {
         clearSpeakTimer();
         console.warn('SpeechRecognition error:', event.error);
-        if (event.error !== 'no-speech') {
+        // Our own stop() call surfaces as 'aborted' — not an error.
+        if (event.error === 'aborted') {
+          setActiveVoiceId(null);
+          return;
+        }
+        if (event.error === 'network' && retryRef.current < 1) {
+          // Transient Chrome speech-socket drop: one silent re-connect.
+          retryRef.current += 1;
+          try {
+            recognition.start();
+            return;
+          } catch (retryErr) {
+            console.warn('Speech retry failed:', retryErr);
+          }
+        }
+        retryRef.current = 0;
+        if (event.error === 'network') {
+          setErrorMsg('Voice service unreachable. Check your internet, then tap Speak to try again.');
+          clearError();
+        } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          setErrorMsg('Microphone access denied. Please check browser permissions.');
+          clearError();
+        } else if (event.error === 'audio-capture') {
+          setErrorMsg('No microphone found or mic is busy.');
+          clearError();
+        } else if (event.error !== 'no-speech') {
           setErrorMsg(`Voice error: ${event.error}`);
           clearError();
         }
@@ -297,6 +343,7 @@ export default function SocratesVoiceControl({
       };
 
       recognitionRef.current = recognition;
+      retryRef.current = 0; // fresh tap = fresh retry budget
       recognition.start();
     } catch (err) {
       clearSpeakTimer();

@@ -481,12 +481,42 @@
 @media (max-width: 900px) {
   .mv-auth-container {
     flex-direction: column;
+    min-height: 100dvh;
+    padding-top: var(--sat);
   }
   .mv-auth-hero {
-    flex: none;
-    padding: 2rem;
+    display: none;
   }
   .mv-auth-main {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem calc(1.5rem + var(--sab)) !important;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .mv-auth-card {
+    padding: 1.5rem 1.25rem !important;
+    border-radius: 20px !important;
+    max-width: 100% !important;
+    box-shadow: 0 4px 20px rgba(26, 46, 68, 0.06) !important;
+  }
+  .mv-mobile-logo {
+    display: flex !important;
+  }
+  .mv-auth-top-nav {
+    margin-bottom: 1.25rem;
+  }
+  .mv-otp-group {
+    gap: 0.35rem;
+  }
+  .mv-otp-digit {
+    width: 42px;
+    height: 46px;
+    font-size: 1.15rem;
+  }
+  .mv-stepper {
+    margin-bottom: 1.25rem;
+  }
+  .mv-step-title {
+    font-size: 0.7rem;
   }
 }
+

@@ -494,6 +494,21 @@
   .nh-map-panel {
     height: 320px;
     flex: none;
+    /* PWA hardening: tiles/panes stay trapped inside this box even if
+       Leaflet's own CSS is ever delayed — no overlap onto the cards. */
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 14px;
+    border: 1px solid #E2E8F0;
+    margin: 0 0.85rem 0.85rem;
+  }
+  .nh-map-container {
+    background: #E5E7EB;
+  }
+  .nh-map-overlay {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
   }
   .nh-header {
     padding: 0.75rem 1rem;

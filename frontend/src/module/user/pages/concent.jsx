@@ -217,15 +217,15 @@ export default function Consent() {
       <main className="sih-main-layout">
 
         {/* CONSENTS MAIN HEADING CONTAINER */}
-        <div className="sih-card" style={{ padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary-navy)', letterSpacing: '-0.02em', margin: 0 }}>Consents</h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '0.25rem' }}>
+        <div className="sih-card consent-hero">
+          <div className="consent-hero-text">
+            <h2 className="consent-hero-title">Consents</h2>
+            <p className="consent-hero-sub">
               Manage patient data access permissions, consent requests, and authorization records.
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="consent-badges">
             <span className="sih-badge sih-badge-teal">
               Active: {countAccepted}
             </span>
@@ -239,57 +239,53 @@ export default function Consent() {
         </div>
 
         {/* CATEGORIES (LEFT) + RECORDS (RIGHT) */}
-        <div style={{ display: 'flex', gap: '1.25rem' }}>
+        <div className="consent-layout">
 
         {/* STATUS CATEGORIES — left sidebar */}
-        <div className="sih-card" style={{ padding: '1rem', width: '220px', flexShrink: 0 }}>
-          <p style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', margin: '0 0 0.6rem 0.25rem' }}>
+        <div className="sih-card consent-cats-card">
+          <p className="consent-cats-label">
             Categories
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div className="consent-cats">
           <button
             onClick={() => setActiveStatus('all')}
-            className={`tab-nav-btn ${activeStatus === 'all' ? 'active' : ''}`}
-            style={{ padding: '0.6rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            className={`tab-nav-btn consent-cat-btn ${activeStatus === 'all' ? 'active' : ''}`}
           >
-            <span style={{ flex: 1 }}>All Records</span>
-            <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.45rem', borderRadius: '999px', backgroundColor: 'rgba(18,48,74,0.08)', fontWeight: 900, color: 'var(--primary-navy)' }}>
+            <span className="consent-cat-name">All Records</span>
+            <span className="consent-cat-count consent-cat-count-all">
               {consents.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveStatus('accepted')}
-            className={`tab-nav-btn ${activeStatus === 'accepted' ? 'active' : ''}`}
-            style={{ padding: '0.6rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            className={`tab-nav-btn consent-cat-btn ${activeStatus === 'accepted' ? 'active' : ''}`}
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', flexShrink: 0 }}></span>
-            <span style={{ flex: 1 }}>Accepted</span>
-            <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.45rem', borderRadius: '999px', backgroundColor: 'rgba(12,154,154,0.12)', fontWeight: 900, color: 'var(--teal-primary)' }}>
+            <span className="consent-dot" style={{ backgroundColor: '#10B981' }}></span>
+            <span className="consent-cat-name">Accepted</span>
+            <span className="consent-cat-count consent-cat-count-accepted">
               {countAccepted}
             </span>
           </button>
 
           <button
             onClick={() => setActiveStatus('pending')}
-            className={`tab-nav-btn ${activeStatus === 'pending' ? 'active' : ''}`}
-            style={{ padding: '0.6rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            className={`tab-nav-btn consent-cat-btn ${activeStatus === 'pending' ? 'active' : ''}`}
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0 }}></span>
-            <span style={{ flex: 1 }}>Pending</span>
-            <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.45rem', borderRadius: '999px', backgroundColor: 'rgba(245,158,11,0.1)', fontWeight: 900, color: '#F59E0B' }}>
+            <span className="consent-dot" style={{ backgroundColor: '#F59E0B' }}></span>
+            <span className="consent-cat-name">Pending</span>
+            <span className="consent-cat-count consent-cat-count-pending">
               {countPending}
             </span>
           </button>
 
           <button
             onClick={() => setActiveStatus('rejected')}
-            className={`tab-nav-btn ${activeStatus === 'rejected' ? 'active' : ''}`}
-            style={{ padding: '0.6rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            className={`tab-nav-btn consent-cat-btn ${activeStatus === 'rejected' ? 'active' : ''}`}
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EF4444', flexShrink: 0 }}></span>
-            <span style={{ flex: 1 }}>Rejected</span>
-            <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.45rem', borderRadius: '999px', backgroundColor: 'rgba(239,68,68,0.1)', fontWeight: 900, color: '#EF4444' }}>
+            <span className="consent-dot" style={{ backgroundColor: '#EF4444' }}></span>
+            <span className="consent-cat-name">Rejected</span>
+            <span className="consent-cat-count consent-cat-count-rejected">
               {countRejected}
             </span>
           </button>
@@ -297,31 +293,31 @@ export default function Consent() {
         </div>
 
         {/* CONSENT RECORDS — right side */}
-        <div className="sih-card" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', flex: 1, minWidth: 0 }}>
+        <div className="sih-card consent-records-card">
           
           {/* Panel Sub-header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-navy)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--teal-primary)' }}></span>
+          <div className="consent-panel-head">
+            <h3 className="consent-panel-title">
+              <span className="consent-panel-dot"></span>
               Consent Records ({filteredConsents.length})
             </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              Showing: <strong style={{ color: 'var(--primary-navy)', textTransform: 'uppercase' }}>{activeStatus}</strong>
+            <span className="consent-panel-showing">
+              Showing: <strong className="consent-panel-status">{activeStatus}</strong>
             </span>
           </div>
 
           {/* CONSENT RECORDS LIST */}
           {filteredConsents.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="consent-records-list">
               {filteredConsents.map((consent) => (
                 <div
                   key={consent.id}
-                  style={{ backgroundColor: 'var(--mint-bg)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+                  className="consent-record-card"
                 >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--primary-navy)', margin: 0 }}>
+                  <div className="consent-record-top">
+                    <div className="consent-record-id">
+                      <div className="consent-record-title-row">
+                        <h4 className="consent-record-title">
                           {consent.title}
                         </h4>
 
@@ -336,25 +332,25 @@ export default function Consent() {
                         </span>
                       </div>
 
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '0.2rem', margin: 0 }}>
-                        Requested by: <strong style={{ color: 'var(--primary-navy)' }}>{consent.requester}</strong>
+                      <p className="consent-record-requester">
+                        Requested by: <strong className="consent-record-requester-name">{consent.requester}</strong>
                       </p>
                     </div>
 
-                    <div style={{ textAlign: 'right', fontSize: '0.7rem' }}>
-                      <p style={{ color: 'var(--text-muted)', margin: 0 }}>Requested: {formatDate(consent.date)}</p>
-                      <p style={{ color: 'var(--primary-navy)', fontWeight: 700, margin: 0 }}>Expiry: {formatDate(consent.expiry)}</p>
+                    <div className="consent-record-dates">
+                      <p className="consent-record-date">Requested: {formatDate(consent.date)}</p>
+                      <p className="consent-record-expiry">Expiry: {formatDate(consent.expiry)}</p>
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-main)', backgroundColor: 'white', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)', margin: 0 }}>
+                  <p className="consent-record-purpose">
                     {consent.purpose}
                   </p>
 
                   {/* Scope & Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', paddingTop: '0.25rem' }}>
-                    <div className="scope-pills-wrap">
-                      <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', alignSelf: 'center' }}>Scope:</span>
+                  <div className="consent-record-foot">
+                    <div className="scope-pills-wrap consent-scope">
+                      <span className="consent-scope-label">Scope:</span>
                       {consent.scope.map((scp, idx) => (
                         <span key={idx} className="scope-pill-tag">
                           {scp}
@@ -362,11 +358,10 @@ export default function Consent() {
                       ))}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className="consent-record-actions">
                       <button
                         onClick={() => setSelectedConsent(consent)}
-                        className="sih-btn sih-btn-navy"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                        className="sih-btn sih-btn-navy consent-action-btn"
                       >
                         Details
                       </button>
@@ -375,15 +370,13 @@ export default function Consent() {
                         <>
                           <button
                             onClick={() => handleUpdateStatus(consent.id, 'accepted')}
-                            className="sih-btn sih-btn-primary"
-                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                            className="sih-btn sih-btn-primary consent-action-btn"
                           >
                             Accept
                           </button>
                           <button
                             onClick={() => handleUpdateStatus(consent.id, 'rejected')}
-                            className="sih-btn sih-btn-danger"
-                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                            className="sih-btn sih-btn-danger consent-action-btn"
                           >
                             Reject
                           </button>
@@ -393,8 +386,7 @@ export default function Consent() {
                       {consent.status === 'accepted' && (
                         <button
                           onClick={() => handleUpdateStatus(consent.id, 'rejected')}
-                          className="sih-btn sih-btn-outline"
-                          style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', color: '#EF4444' }}
+                          className="sih-btn sih-btn-outline consent-action-btn consent-revoke-btn"
                         >
                           Revoke Access
                         </button>
@@ -407,16 +399,15 @@ export default function Consent() {
             </div>
           ) : (
             /* EMPTY STATE */
-            <div style={{ textAlign: 'center', padding: '3rem 1rem', backgroundColor: 'var(--mint-bg)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-light)' }}>
-              <div style={{ fontSize: '2.5rem' }}><LockKeyhole /></div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary-navy)', marginTop: '0.5rem' }}>No Consent Records Found</h4>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                No patient consent entries match the selected status <strong style={{ textTransform: 'uppercase' }}>"{activeStatus}"</strong>.
+            <div className="consent-empty">
+              <div className="consent-empty-icon"><LockKeyhole /></div>
+              <h4 className="consent-empty-title">No Consent Records Found</h4>
+              <p className="consent-empty-text">
+                No patient consent entries match the selected status <strong className="consent-empty-status">"{activeStatus}"</strong>.
               </p>
               <button
                 onClick={() => { setActiveStatus('all'); setSearchQuery(''); }}
-                className="sih-btn sih-btn-primary"
-                style={{ marginTop: '1rem', padding: '0.4rem 1rem', fontSize: '0.75rem' }}
+                className="sih-btn sih-btn-primary consent-empty-btn"
               >
                 View All Consents
               </button>
@@ -460,7 +451,7 @@ export default function Consent() {
                   <p style={{ color: 'var(--text-main)', marginTop: '0.1rem', margin: 0 }}>{selectedConsent.purpose}</p>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-light)' }}>
+                <div className="consent-modal-dates">
                   <div>
                     <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', margin: 0 }}>Granted Date</p>
                     <p style={{ fontWeight: 700, color: 'var(--primary-navy)', margin: 0 }}>{formatDate(selectedConsent.date)}</p>

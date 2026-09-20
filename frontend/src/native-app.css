@@ -158,20 +158,30 @@ img {
   /* Sidebar becomes the tab bar's job — hide the rail */
   .patient-sidebar { display: none; }
 
-  /* Every patient page root (GenAI, forms, profile, docs…) clears the tab bar */
+  /* Clear the bottom fixed tabbar without creating an empty gap */
   .sih-page-wrapper {
-    padding-bottom: calc(var(--tabbar-h) + var(--sab) + 1rem) !important;
+    padding-bottom: 0 !important;
+    min-height: calc(100dvh - 56px - var(--sat) - var(--tabbar-h) - var(--sab)) !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .patient-main-container {
-    padding: 1rem 1rem calc(var(--tabbar-h) + var(--sab) + 1rem) !important;
+    padding: 0.5rem 0.5rem calc(var(--tabbar-h) + var(--sab)) !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .sih-main-layout {
-    padding: 1rem 1rem calc(var(--tabbar-h) + var(--sab) + 1rem);
+    padding: 0.5rem 0.5rem calc(var(--tabbar-h) + var(--sab));
   }
 
-  /* Content never hides under the tab bar */
-  .patient-content-area { padding-bottom: 0.5rem; }
+  .patient-content-area {
+    padding-bottom: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
 
   /* Touch targets */
   .sih-btn { min-height: 44px; font-size: 0.9rem; }
@@ -180,14 +190,26 @@ img {
   /* Prevent iOS auto-zoom on focus */
   input, select, textarea { font-size: 16px !important; }
 
-  /* Wide tables scroll instead of breaking layout */
-  .sih-card { overflow-x: auto; }
-  table { min-width: 560px; }
+  /* Wide tables scroll instead of breaking layout.
+     PWA FIX: only cards that actually contain a table become
+     horizontal scrollers. Plain cards (e.g. Consent hero /
+     categories / records) must clip, never sideways-scroll,
+     otherwise narrow viewports show cut-off text like in the
+     Consent screenshot. */
+  .sih-card { overflow-x: clip; min-width: 0; }
+  .sih-card:has(table) { overflow-x: auto; }
+  .sih-card table { min-width: 560px; }
 
   /* Chatbot FAB floats above the tab bar */
   .lp-chatbot-fab {
     bottom: calc(var(--tabbar-h) + var(--sab) + 12px) !important;
     right: 14px !important;
+  }
+  /* PWA FIX: 100px FAB covers CTAs (e.g. "View All Consents")
+     on 360px viewports — shrink it on phones. */
+  .lp-chatbot-fab {
+    width: 64px !important;
+    height: 64px !important;
   }
 }
 
@@ -589,7 +611,285 @@ select.sih-input, select.sih-select, select.mv-input, select.mv-lang-select, sel
 .sih-profile-dropdown-item { min-height: 48px; }
 .native-docnav-item { min-height: 44px; }
 
+/* ---------- Basic Info Page Mobile PWA Overrides ---------- */
+@media (max-width: 768px) {
+  .patient-content-area .sih-card {
+    padding: 1rem !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Stack top subheader (Patient Record ID + Edit/Print buttons) */
+  .patient-content-area > div:first-child > div {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  .patient-content-area > div:first-child > div > div:last-child {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .patient-content-area > div:first-child .sih-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Profile card avatar + name stacking with tight margins */
+  .sih-card .basic-info-hero-flex,
+  .sih-card div[style*="alignItems: 'flex-start'"],
+  .sih-card div[style*="align-items: flex-start"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .sih-card .basic-info-name-block,
+  .sih-card div[style*="flex: '1 1 300px'"],
+  .sih-card div[style*="flex: 1 1 300px"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    gap: 0.35rem !important;
+  }
+
+  .sih-card .basic-info-name-block > div:first-child,
+  .sih-card div[style*="marginTop: '-2rem'"],
+  .sih-card div[style*="margin-top: -2rem"] {
+    margin-top: -1.25rem !important;
+  }
+
+  /* Key details grid goes 2-column with minimal row gap */
+  .sih-card .basic-info-grid,
+  .sih-card div[style*="gridTemplateColumns"],
+  .sih-card div[style*="grid-template-columns"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.4rem !important;
+    width: 100% !important;
+  }
+
+  /* Phone & Email quick action buttons go side-by-side full width */
+  .sih-card div[style*="flex-direction: column"] > a.sih-btn {
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+
+  .sih-card div[style*="flex-direction: column"]:has(> a.sih-btn) {
+    flex-direction: row !important;
+    width: 100% !important;
+    gap: 0.5rem !important;
+    margin-top: 0.25rem !important;
+  }
+
+  /* Tab Navigation bar on mobile */
+  .sih-card:has(> .tab-nav-btn) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+    padding: 0.3rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .tab-nav-btn {
+    width: 100% !important;
+    font-size: 0.8rem !important;
+    padding: 0.55rem 0.5rem !important;
+    text-align: center !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Emergency contact box on mobile */
+  div[style*="backgroundColor: rgb(254, 226, 226)"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: center !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .native-route { animation: none; }
+}
+
+/* ==========================================================
+   BIG-TECH NATIVE POLISH — PWA ONLY (small screens)
+   Desktop website UI is untouched: every rule below lives
+   inside a mobile media query. No gradients, no glass, no
+   glow — flat surfaces, hairline borders, calm motion.
+   ========================================================== */
+@media (max-width: 768px) {
+  /* ---- app canvas: quiet grouped background ---- */
+  body { background: #EDF2F0 !important; }
+  .sih-page-wrapper { background: transparent !important; }
+  .sih-main-layout { max-width: 100% !important; }
+
+  /* ---- flat cards: 16px radius, hairline, no shadow ---- */
+  .sih-card,
+  .doc-card-item,
+  .doc-socrates-card,
+  .landing-action-card,
+  .landing-health-card,
+  .landing-notifications,
+  .nh-card {
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    border: 1px solid var(--border-light, #E2E8F0) !important;
+  }
+
+  /* ---- flatten large gradient surfaces to solid navy ---- */
+  .landing-hero,
+  .profile-hero-banner,
+  .abha-nha-banner,
+  .doc-modal-header { background: #12304A !important; }
+  .landing-hero::before,
+  .landing-hero::after { display: none !important; }
+  div[style*="linear-gradient"] { background: #12304A !important; }
+
+  /* ---- de-glass the stat cards (flat white, cheaper to paint) ---- */
+  .landing-stat-card {
+    background: #FFFFFF !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--border-light, #E2E8F0) !important;
+  }
+
+  /* ---- hairline chrome instead of soft shadows ---- */
+  .sih-header { box-shadow: 0 1px 0 rgba(18, 48, 74, 0.08) !important; }
+  .native-tabbar { box-shadow: 0 -1px 0 rgba(18, 48, 74, 0.08) !important; }
+
+  /* ---- bare inline multi-column grids (explorers) → one column.
+         Grids inside .sih-card are already handled as 2-col above. ---- */
+  div[style*="minmax(340px"],
+  div[style*="1fr 1.6fr"],
+  div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+
+  /* ---- inline rows wrap instead of squeezing.
+         Tab bars (contain .tab-nav-btn) stay single-row. ---- */
+  .patient-content-area div[style*="display: flex"]:not([style*="column"]):not([style*="wrap"]):not(:has(> .tab-nav-btn)),
+  .doc-content-area div[style*="display: flex"]:not([style*="column"]):not([style*="wrap"]),
+  .doc-embedded-directory-content div[style*="display: flex"]:not([style*="column"]):not([style*="wrap"]),
+  .mv-auth-card div[style*="display: flex"]:not([style*="column"]):not([style*="wrap"]) {
+    flex-wrap: wrap !important;
+  }
+
+  /* ---- primary + outline button pairs share the row, wrap when tight ---- */
+  div:has(> .sih-btn-primary):has(> .sih-btn-outline) > .sih-btn,
+  div:has(> .sih-btn-primary):has(> .sih-btn-outline) > a.sih-btn {
+    flex: 1 1 140px !important;
+  }
+
+  /* ---- padding trims (order matters: specific mains rule last) ---- */
+  div[style*="padding: 2rem"] { padding: 1.1rem 1rem !important; }
+  div[style*="padding: 1.5rem"] { padding: 1rem !important; }
+  div[style*="padding: 1.75rem"],
+  div[style*="padding: 1.8rem"] { padding: 1rem !important; }
+  main[style*="2rem 1.5rem"] { padding: 1rem 0.85rem !important; }
+
+  /* ---- hero / banner rhythm ---- */
+  .landing-hero,
+  .profile-hero-banner { padding: 1.25rem 1.1rem !important; border-radius: 16px !important; }
+  .abha-nha-banner { padding: 0.85rem 1rem !important; }
+  .abha-card-body { padding: 1.1rem !important; }
+  .abha-card-main-row { flex-wrap: wrap !important; }
+  .abha-avatar-box { width: 76px !important; height: 76px !important; font-size: 1.6rem !important; }
+  .abha-number-box,
+  .abha-phr-box { overflow-wrap: anywhere !important; }
+  .profile-avatar-large { width: 84px !important; height: 84px !important; font-size: 2rem !important; }
+  .profile-field-row { gap: 0.75rem !important; }
+  .profile-field-val { overflow-wrap: anywhere !important; min-width: 0 !important; }
+
+  /* ---- chat: flat bubbles, calm voice orb ---- */
+  .medical-genai-container { box-shadow: none !important; border-radius: 16px !important; }
+  .message-bubble { box-shadow: none !important; border-radius: 16px !important; }
+  .message-row.user .message-bubble { background: #2F8F83 !important; }
+  .message-row.assistant .message-avatar { background: #2F8F83 !important; }
+  .v2v-header-btn { background: #2F8F83 !important; box-shadow: none !important; }
+  .send-btn { background: #2F8F83 !important; }
+  .voice-orb-wrapper .centered-morph-circle {
+    border-radius: 50% !important;
+    animation: native-orb-calm 2.4s ease-in-out infinite !important;
+  }
+  .voice-orb-wrapper.idle .centered-morph-circle { background: #12304A !important; }
+  .voice-orb-wrapper.listening .centered-morph-circle { background: #2F8F83 !important; }
+  .voice-orb-wrapper.thinking .centered-morph-circle { background: #1A4163 !important; }
+  .voice-orb-wrapper.speaking .centered-morph-circle { background: #2F8F83 !important; }
+  @keyframes native-orb-calm {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+  }
+
+  /* ---- doctor: single column, sheet modal, tighter cards ---- */
+  .doc-socrates-grid { grid-template-columns: 1fr !important; }
+  .doc-form-detail-grid { grid-template-columns: 1fr !important; }
+  .doc-socrates-container { padding: 0 !important; }
+  .doc-socrates-card { padding: 1rem !important; }
+  .doc-socrates-card:hover { transform: none !important; }
+  .doc-modal-backdrop,
+  .doc-modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .doc-modal-card.doc-form-detail-modal {
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 92dvh !important;
+    box-shadow: none !important;
+  }
+  .doc-modal-header { padding: 1rem 1.1rem !important; }
+  .doc-modal-body { padding: 1.1rem !important; }
+  .doc-modal-footer {
+    padding: 1rem 1.1rem calc(1rem + var(--sab)) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+  }
+
+  /* ---- directory tables stay legible ---- */
+  .namaste-symptom-table th,
+  .namaste-symptom-table td { padding: 0.35rem !important; font-size: 0.72rem !important; }
+
+  /* ---- auth: fluid OTP, stacked grid, compact stepper ---- */
+  .mv-form-grid-2 { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+  .mv-otp-group { gap: 0.3rem !important; }
+  .mv-otp-digit {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    max-width: 48px !important;
+    width: auto !important;
+    height: 46px !important;
+  }
+  .mv-auth-card { box-shadow: none !important; border: 1px solid var(--border-light, #E2E8F0) !important; }
+  .mv-step-title { font-size: 0.62rem !important; white-space: nowrap !important; }
+  .mv-step-num { width: 28px !important; height: 28px !important; font-size: 0.78rem !important; }
+
+  /* ---- nearby hospitals: shorter map, calm cards, wrapping popup ---- */
+  .nh-map-panel { height: 280px !important; }
+  .nh-card { border-radius: 14px !important; box-shadow: none !important; }
+  .leaflet-popup-content > div { flex-wrap: wrap !important; }
+
+  /* ---- nearby hospitals: upstream fixed-height split view becomes a
+         scrolling column on PWA (desktop keeps 100vh app-like layout) ---- */
+  .patient-main-container:has(.nearby-hospitals-page) { height: auto !important; }
+  .patient-content-area:has(.nearby-hospitals-page) {
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: calc(var(--tabbar-h) + var(--sab)) !important;
+  }
+  .nearby-hospitals-page[style] {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .nearby-hospitals-main[style] { height: auto !important; }
+  .nh-map-panel[style] { display: block !important; flex: none !important; }
+  .nh-map-panel .nh-map-container[style] {
+    flex: none !important;
+    min-height: 0 !important;
+    height: 280px !important;
+  }
 }
 

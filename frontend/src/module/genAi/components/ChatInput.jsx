@@ -43,36 +43,39 @@ export const ChatInput = ({
             </button>
           )}
 
-          {/* Quick Mic Speech-to-text Toggle */}
-          <button
-            type="button"
-            className={`control-btn voice-chat-btn ${isVoiceActive ? 'active listening' : ''}`}
-            onClick={toggleVoiceMode}
-            title={isVoiceActive ? 'Mute Mic' : 'Unmute Mic'}
-          >
-            {isVoiceActive ? (
-              <>
-                <span className="btn-icon mic-pulse">🎙️</span>
-                <span className="btn-label">Mic ON</span>
-              </>
-            ) : (
-              <>
-                <span className="btn-icon">🎙️</span>
-                <span className="btn-label">Mic OFF</span>
-              </>
-            )}
-          </button>
-
-          {/* Send Button */}
-          <button
-            type="submit"
-            className="send-btn"
-            disabled={!inputMessage.trim() || loading}
-            title="Send Message"
-          >
-            <span>Send</span>
-            <span className="send-icon">➤</span>
-          </button>
+          {/* Unified Dynamic Mic / Send Action Button */}
+          {inputMessage.trim() ? (
+            <button
+              type="submit"
+              className="send-btn"
+              disabled={loading}
+              title="Send Message"
+            >
+              <span>Send</span>
+              <span className="send-icon">➤</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`control-btn voice-chat-btn ${isVoiceActive ? 'active listening' : ''}`}
+              onClick={toggleVoiceMode}
+              onMouseDown={() => !isVoiceActive && toggleVoiceMode()}
+              onTouchStart={() => !isVoiceActive && toggleVoiceMode()}
+              title={isVoiceActive ? 'Stop Mic Recording' : 'Tap or Hold to Speak'}
+            >
+              {isVoiceActive ? (
+                <>
+                  <span className="btn-icon mic-pulse" style={{ color: '#EF4444' }}>🎙️</span>
+                  <span className="btn-label">Listening...</span>
+                </>
+              ) : (
+                <>
+                  <span className="btn-icon">🎙️</span>
+                  <span className="btn-label">Mic</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </form>

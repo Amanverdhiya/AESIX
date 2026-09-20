@@ -67,11 +67,14 @@ const PatientSidebar = ({
   ];
 
   const isItemActive = (item) => {
-    if (activePage) return activePage === item.key;
+    if (activePage) {
+      if (item.key === "kindle" && (activePage === "kindle" || activePage === "health-code")) return true;
+      return activePage === item.key;
+    }
     if (currentPath === item.path) return true;
     if (item.key === "abha" && currentPath === "/abhaId") return true;
     if (item.key === "uploadDoc" && currentPath === "/docs") return true;
-    if (item.key === "kindle" && (currentPath === "/health-code" || currentPath === "/namaste-code" || currentPath === "/icd-code")) return true;
+    if (item.key === "kindle" && (currentPath === "/kindle" || currentPath === "/kindlemain" || currentPath === "/health-code" || currentPath === "/namaste-code" || currentPath === "/icd-code")) return true;
     if (item.key === "nearbyHospitals" && (currentPath === "/nearby-hospitals" || currentPath === "/emergency")) return true;
     return false;
   };

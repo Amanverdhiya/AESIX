@@ -214,6 +214,10 @@ export default function Register() {
           </div>
 
           <div className="mv-card-header">
+            <div className="mv-mobile-logo" style={{ display: 'none', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem' }}>
+              <img src="/mediksha.png" alt="MedIksha" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+              <span style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--mv-teal)' }}>MedIksha</span>
+            </div>
             <h1>Register with MedIksha</h1>
             <p>Create your verified ABDM digital health account</p>
           </div>

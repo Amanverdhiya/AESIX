@@ -289,7 +289,27 @@ export const GenAiBot = () => {
   };
 
   const handleSelectQuickAction = (actionText) => {
+    // A real tap commits the text — drop any hover preview backup.
+    previewBackupRef.current = null;
     setInputMessage(actionText);
+  };
+
+  // Hover preview (PWA quick-action options): temporarily show the option's
+  // example query in the input; restoring the user's own text on hover-out.
+  // Never commits — sending still requires an explicit tap + Send.
+  const previewBackupRef = useRef(null);
+  const handlePreviewQuickAction = (previewText) => {
+    if (previewText == null) {
+      if (previewBackupRef.current !== null) {
+        setInputMessage(previewBackupRef.current);
+        previewBackupRef.current = null;
+      }
+      return;
+    }
+    if (previewBackupRef.current === null) {
+      previewBackupRef.current = inputMessage;
+    }
+    setInputMessage(previewText);
   };
 
   /* -------------------------------------------------------------
@@ -579,7 +599,7 @@ export const GenAiBot = () => {
               />
             ) : (
               <>
-                <QuickActions onSelectAction={handleSelectQuickAction} language={convoLanguage} />
+                <QuickActions onSelectAction={handleSelectQuickAction} onPreviewAction={handlePreviewQuickAction} language={convoLanguage} />
                 <ChatMessages messages={messages} loading={loading} chatEndRef={chatEndRef} language={convoLanguage} />
                 <ChatInput
                   inputMessage={inputMessage}

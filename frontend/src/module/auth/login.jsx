@@ -241,6 +241,10 @@ export default function Login() {
           </div>
 
           <div className="mv-card-header">
+            <div className="mv-mobile-logo" style={{ display: 'none', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem' }}>
+              <img src="/mediksha.png" alt="MedIksha" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+              <span style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--mv-teal)' }}>MedIksha</span>
+            </div>
             <h1>Welcome Back!</h1>
             <p>Sign in using your verified health identification</p>
           </div>

@@ -23,9 +23,8 @@ import {
 import PatientSidebar from '../components/asidebar';
 import './NearbyHospitals.css';
 import '../userPages.css';
-
-// Base URL for API (fallback to localhost for dev)
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import 'leaflet/dist/leaflet.css';
+import { fetchApi } from '../../../shared/apiBase';
 
 // Default center: Connaught Place, New Delhi (if GPS unavailable)
 const DEFAULT_COORDS = { lat: 28.6139, lng: 77.2090 };
@@ -49,18 +48,6 @@ export default function NearbyHospitals() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
-
-  // Inject Leaflet CSS if not already present
-  useEffect(() => {
-    const leafletId = 'leaflet-css';
-    if (!document.getElementById(leafletId)) {
-      const link = document.createElement('link');
-      link.id = leafletId;
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
-  }, []);
 
   // 1. Request User's Live Geolocation
   useEffect(() => {
@@ -93,8 +80,7 @@ export default function NearbyHospitals() {
       setLoading(true);
       setError('');
       try {
-        const apiUrl = `${baseUrl}/users/nearby-hospitals?lat=${coords.lat}&lng=${coords.lng}&radius=${radius}&limit=10`;
-        const res = await fetch(apiUrl);
+        const res = await fetchApi(`/users/nearby-hospitals?lat=${coords.lat}&lng=${coords.lng}&radius=${radius}&limit=10`);
         const json = await res.json();
 
         if (!res.ok || !json.success) {

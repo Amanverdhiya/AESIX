@@ -1,9 +1,10 @@
-const CACHE_NAME = 'mediksha-v12';
+const CACHE_NAME = 'mediksha-v13';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/offline.html',
   '/favicon.svg',
+  '/apple-touch-icon.png',
   '/pwa-192.png',
   '/pwa-512.png',
   '/maskable-512.png',

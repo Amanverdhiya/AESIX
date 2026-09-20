@@ -31,7 +31,9 @@ FilePenLine,
   Contact,
   Folder,
   Leaf,
-  Globe
+  Globe,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 const FEATURED_NAMASTE_TERMS = ['Jvara', 'Madhumeha', 'Kasa', 'Atisara', 'Amlapitta', 'Shvasa'];
@@ -40,7 +42,7 @@ const FEATURED_NAMASTE_TERMS = ['Jvara', 'Madhumeha', 'Kasa', 'Atisara', 'Amlapi
 function stripHtml(value) {
   if (value == null) return '';
   const raw = typeof value === 'string' ? value : (value['@value'] ?? value.value ?? '');
-  return String(raw).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return String(raw).replace(/<[^>]*>/g, '').replace(/[@#]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function EncyTag({ children, color = 'var(--teal-primary)', bg = 'var(--mint-light)' }) {
@@ -395,6 +397,13 @@ export default function KindleMain({ embedded = false }) {
   const [record, setRecord] = useState(null);
   const [isLoadingRecord, setIsLoadingRecord] = useState(false);
 
+  // Right detail panel is capped at ~left search-box height; the toggle
+  // ("dropdown button") expands it to full depth on click.
+  const [detailExpanded, setDetailExpanded] = useState(false);
+  const [detailClipped, setDetailClipped] = useState(false);
+  const detailBodyRef = useRef(null);
+  const detailCardRef = useRef(null);
+
   // Header state (shared global language — only clicked language is shown)
   const { language, setLanguage } = useDashboardLanguage();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -496,6 +505,8 @@ export default function KindleMain({ embedded = false }) {
     setSelectedCode(code);
     setIsLoadingRecord(true);
     setRecord(null);
+    // New disease → start capped again so the panel never opens deep.
+    setDetailExpanded(false);
     try {
       const data = await userApi.getDiseaseRecord(code, entityUri);
       // Backfill ICD → NAMASTE reverse peers when backend has none yet
@@ -533,6 +544,42 @@ export default function KindleMain({ embedded = false }) {
 
   const parseItemCode = (item) => {
     return item.theCode || item.theCodeAndTitle?.code || item.code || item.id || item.entityId || parseItemLabel(item);
+  };
+
+  // Show the expand toggle only when the detail body actually overflows
+  // the capped height (short entries need no dropdown button).
+  const hasDetailContent = Boolean(record) || featuredRecords.length > 0;
+  useEffect(() => {
+    if (detailExpanded) {
+      setDetailClipped(true);
+      return;
+    }
+    const el = detailBodyRef.current;
+    if (!el || !hasDetailContent) {
+      setDetailClipped(false);
+      return;
+    }
+    const check = () => {
+      setDetailClipped(el.scrollHeight > el.clientHeight + 8);
+    };
+    check();
+    window.addEventListener('resize', check);
+    // Re-check after fonts/images settle.
+    const timer = setTimeout(check, 500);
+    return () => {
+      window.removeEventListener('resize', check);
+      clearTimeout(timer);
+    };
+  }, [record, featuredRecords, featuredLoading, isLoadingRecord, detailExpanded, hasDetailContent]);
+
+  const toggleDetail = () => {
+    if (detailExpanded) {
+      setDetailExpanded(false);
+      // Back to capped view → bring the panel top back into view.
+      detailCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      setDetailExpanded(true);
+    }
   };
 
   return (
@@ -583,7 +630,7 @@ export default function KindleMain({ embedded = false }) {
       </header>}
 
       <div className={embedded ? 'doc-embedded-directory-content' : 'patient-main-container'}>
-        {!embedded && <PatientSidebar patientName={patientName} initials={initials} activePage="health-code" />}
+        {!embedded && <PatientSidebar patientName={patientName} initials={initials} activePage="kindle" />}
         <div className={embedded ? '' : 'patient-content-area'}>
 
           {/* ===== MAIN CONTENT ===== */}
@@ -762,8 +809,13 @@ export default function KindleMain({ embedded = false }) {
                 </div>
               </div>
 
-          {/* Right Column: Encyclopedia detail */}
-          <div className="sih-card" style={{ padding: '2rem', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+          {/* Right Column: Encyclopedia detail — capped at left-box depth,
+              full depth only via the dropdown toggle below. */}
+          <div ref={detailCardRef} className="sih-card dir-detail-card">
+            <div
+              ref={detailBodyRef}
+              className={`dir-detail-body${!detailExpanded && hasDetailContent ? ' is-collapsed' : ''}`}
+            >
             {isLoadingRecord ? (
               <div style={{ margin: 'auto', textAlign: 'center', padding: '3rem 0' }}>
                 <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔄</div>
@@ -800,7 +852,22 @@ export default function KindleMain({ embedded = false }) {
               </div>
             )}
           </div>
+            {detailClipped && (
+              <button
+                type="button"
+                onClick={toggleDetail}
+                aria-expanded={detailExpanded}
+                className="dir-detail-toggle"
+              >
+                {detailExpanded ? (
+                  <>Show less <ChevronUp size={16} /></>
+                ) : (
+                  <>Show full details <ChevronDown size={16} /></>
+                )}
+              </button>
+            )}
 
+              </div>
             </div>
           </main>
         </div>

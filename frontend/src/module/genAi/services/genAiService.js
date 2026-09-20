@@ -2,9 +2,9 @@
  * Service to communicate with backend GenAI server
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/genai`
-  : 'http://localhost:5001/api/genai';
+import { getApiBase } from '../../../shared/apiBase';
+
+const chatUrl = () => `${getApiBase()}/genai/chat`;
 
 const ROUTE_DIRECTORY = [
   {
@@ -166,14 +166,27 @@ export const getDirectionResponse = (message, language = 'en') => {
 };
 
 export const sendChatMessageToBackend = async (message, history = [], language = 'en') => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+  const postChat = (url) =>
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ message, history, language }),
     });
+
+  try {
+    let response;
+    try {
+      response = await postChat(chatUrl());
+    } catch (networkErr) {
+      // Phone PWA vs. unreachable host → one retry against same-origin.
+      if (!chatUrl().startsWith('/api')) {
+        response = await postChat('/api/genai/chat');
+      } else {
+        throw networkErr;
+      }
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
