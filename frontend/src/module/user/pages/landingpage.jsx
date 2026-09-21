@@ -9,6 +9,7 @@ import ChatbotFAB from "../components/ChatbotFAB";
 import DoctorActivityBell from "../components/DoctorActivityBell";
 import BrandLogo from "../../../shared/BrandLogo";
 
+
 import {
   Camera,
   CalendarDays,
@@ -33,6 +34,7 @@ import {
   Sparkles,
   Lock,
   Building2,
+   TriangleAlert
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -418,88 +420,7 @@ export default function LandingPage() {
                 <Pencil size={14} /> View Full Profile
               </button>
             </div>
-            <div
-              style={{
-                background: "#FFFFFF",
-                borderRadius: "14px",
-                padding: "0.6rem 1rem",
-                border: "1px solid var(--border-light, #E2E8F0)",
-                boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05))",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: "0.5rem 0.85rem",
-              }}
-              className="lp-vitals-strip"
-            >
-              {[
-                {
-                  label: "BP:",
-                  val: profile?.vitalsSnapshot?.bp || "120/80",
-                  unit: "mmHg",
-                  icon: Activity,
-                  color: "#059669",
-                  bg: "#ECFDF5",
-                },
-                {
-                  label: "HR:",
-                  val: profile?.vitalsSnapshot?.heartRate || "72",
-                  unit: "bpm",
-                  icon: HeartPulse,
-                  color: "#0284C7",
-                  bg: "#F0F9FF",
-                },
-                {
-                  label: "SpO2:",
-                  val: (profile?.vitalsSnapshot?.spo2 || "98") + "%",
-                  unit: "",
-                  icon: Sparkles,
-                  color: "#7C3AED",
-                  bg: "#FAF5FF",
-                },
-                {
-                  label: "Glucose:",
-                  val: profile?.vitalsSnapshot?.glucose || "95",
-                  unit: "mg/dL",
-                  icon: CircleCheck,
-                  color: "#D97706",
-                  bg: "#FFFBEB",
-                },
-              ].map((vital, idx) => {
-                const Icon = vital.icon;
-                return (
-                  <div
-                    key={idx}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.35rem",
-                      fontSize: "0.75rem",
-                      fontWeight: 700,
-                      color: "var(--primary-navy, #12304A)",
-                      background: vital.bg,
-                      padding: "0.3rem 0.65rem",
-                      borderRadius: "8px",
-                      border: `1px solid ${vital.color}25`,
-                    }}
-                  >
-                    <Icon size={14} color={vital.color} strokeWidth={2.2} />
-                    <span style={{ color: "var(--text-muted, #64748B)", fontWeight: 600, fontSize: "0.7rem" }}>
-                      {vital.label}
-                    </span>
-                    <span style={{ color: "var(--primary-navy, #12304A)", fontWeight: 800 }}>
-                      {vital.val}
-                    </span>
-                    {vital.unit && (
-                      <span style={{ fontSize: "0.64rem", color: "var(--text-muted, #64748B)", fontWeight: 600 }}>
-                        {vital.unit}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+
 
             {/* ─── 5. ALLERGIES & VACCINATION PILLS ─── */}
             <div
@@ -546,7 +467,7 @@ export default function LandingPage() {
                         justifyContent: "center",
                       }}
                     >
-                      <Nut size={20} />
+                       <TriangleAlert size={20} />
                     </div>
                     <div>
                       <h3 style={{ fontSize: "0.98rem", fontWeight: 800, color: "var(--primary-navy, #12304A)", margin: 0 }}>

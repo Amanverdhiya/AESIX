@@ -906,34 +906,7 @@ export default function BasicInfo() {
 
             </div>
 
-            {/* ═══ 3. CURRENT VITALS SUMMARY — Full Width ═══ */}
-            <div className="sih-card" style={{ padding: '1.25rem' }}>
-              <h3 style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--primary-navy)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                Current Vitals Summary
-              </h3>
 
-              <div className="vitals-cards-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
-                <div className="vital-card-box">
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>Blood Pressure</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--primary-navy)', margin: '0.2rem 0 0 0' }}>{patient.vitalsSnapshot.bp}</p>
-                </div>
-
-                <div className="vital-card-box" style={{ borderLeftColor: '#3B82F6' }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>Heart Rate</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--primary-navy)', margin: '0.2rem 0 0 0' }}>{patient.vitalsSnapshot.heartRate}</p>
-                </div>
-
-                <div className="vital-card-box" style={{ borderLeftColor: '#8B5CF6' }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>Blood Glucose</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--primary-navy)', margin: '0.2rem 0 0 0' }}>{patient.vitalsSnapshot.glucose}</p>
-                </div>
-
-                <div className="vital-card-box" style={{ borderLeftColor: '#EC4899' }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>Oxygen (SpO2)</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--primary-navy)', margin: '0.2rem 0 0 0' }}>{patient.vitalsSnapshot.spo2}</p>
-                </div>
-              </div>
-            </div>
 
           </main>
         </div>
