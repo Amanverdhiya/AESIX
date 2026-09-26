@@ -6,49 +6,35 @@
 
 ### Secure Medical Document Management Platform
 
-<table>
-<tr>
-<td align="center">
-<img src="https://skillicons.dev/icons?i=vercel" width="55"/><br>
-<b>Frontend</b><br>
-Vercel
-</td>
+<p>
+  <a href="https://vercel.com">
+    <img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
+  </a>
 
-<td align="center">
-<img src="https://skillicons.dev/icons?i=render" width="55"/><br>
-<b>Backend</b><br>
-Render
-</td>
+  <a href="https://render.com">
+    <img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" />
+  </a>
 
-<td align="center">
-<img src="https://skillicons.dev/icons?i=mongodb" width="55"/><br>
-<b>Database</b><br>
-MongoDB Atlas
-</td>
+  <a href="https://www.mongodb.com/atlas">
+    <img src="https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  </a>
 
-<td align="center">
-<img src="https://skillicons.dev/icons?i=react" width="55"/><br>
-<b>React</b><br>
-19.x
-</td>
+  <a href="https://react.dev">
+    <img src="https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  </a>
 
-<td align="center">
-<img src="https://skillicons.dev/icons?i=vite" width="55"/><br>
-<b>Bundler</b><br>
-Vite 8
-</td>
+  <a href="https://vitejs.dev">
+    <img src="https://img.shields.io/badge/Bundler-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  </a>
 
-<td align="center">
-<img src="https://skillicons.dev/icons?i=nodejs,express" width="55"/><br>
-<b>Backend</b><br>
-Node.js + Express
-</td>
-</tr>
-</table>
+  <a href="https://nodejs.org">
+    <img src="https://img.shields.io/badge/Backend-Node.js%20Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+  </a>
 
-<br>
-
-<img src="https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-FF6B00?style=for-the-badge" />
+  <a href="https://abdm.gov.in">
+    <img src="https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-FF6B00?style=for-the-badge" />
+  </a>
+</p>
 
 </div>
 
