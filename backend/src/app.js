@@ -17,10 +17,34 @@ import {
 const app = express();
 const port = Number(process.env.PORT || 5001);
 const httpServer = http.createServer(app);
+
+// Allow reverse proxy headers on Render / cloud hosts
+app.set("trust proxy", 1);
+
+// Flexible CORS setup for Render <-> Vercel deployments
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow server-to-server, curl, mobile apps, or any web client origin
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-user-id",
+    "x-abha-number",
+    "Accept",
+    "Origin",
+    "X-Requested-With",
+  ],
+};
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: (origin, callback) => callback(null, true),
     methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
   },
 });
 let server;
@@ -32,9 +56,15 @@ io.on("connection", (socket) => {
   );
 });
 
-app.use(cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "22mb" }));
 
+// Health check endpoints for Render and monitoring
+app.get("/", (_req, res) =>
+  res.json({ status: "ok", message: "AESIX Backend API is running" }),
+);
+app.get("/health", (_req, res) => res.json({ status: "ok" }));
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 app.get("/api/genai/health", (_req, res) =>
   res.json({
@@ -46,9 +76,17 @@ app.get("/api/genai/health", (_req, res) =>
   }),
 );
 app.post("/api/genai/chat", handleGenAiChat);
+app.post("/genai/chat", handleGenAiChat);
+
 app.use("/api/auth", authRouter);
+app.use("/auth", authRouter);
+
 app.use("/api/users", userRoutes);
+app.use("/users", userRoutes);
+
 app.use("/api/doctor", doctorRoutes);
+app.use("/doctor", doctorRoutes);
+
 app.use(errorLogger);
 
 function maskMongoUri(uri) {

@@ -82,6 +82,9 @@ const seed = {
 };
 const copySeed = () => JSON.parse(JSON.stringify(seed));
 const getCollection = async () => {
+  if (mongoose.connection?.readyState === 1 && mongoose.connection.db) {
+    return mongoose.connection.db.collection('user_profiles');
+  }
   if (!mongoUri) return null;
   if (mongoCollection) return mongoCollection;
   if (Date.now() < mongoUnavailableUntil) return null;
@@ -112,6 +115,10 @@ const resolveAuthUser = async (req) => {
         if (session?.userId) {
           const user = await User.findOne({ userId: session.userId });
           if (user) return user;
+          if (mongoose.Types.ObjectId.isValid(session.userId)) {
+            const userById = await User.findById(session.userId);
+            if (userById) return userById;
+          }
         }
       }
     }
@@ -143,20 +150,21 @@ const resolveAuthUser = async (req) => {
 
 const mergeUserWithData = (data, authUser) => {
   if (!authUser) return data;
-  const fullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || data.profile.name;
+  const fullName = `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || authUser.fullName || data.profile.name || 'User';
   return {
     ...data,
     profile: {
       ...data.profile,
       id: authUser.userId || authUser._id?.toString() || data.profile.id,
       name: fullName,
-      dob: authUser.dob || authUser.dateOfBirth || data.profile.dob,
-      gender: authUser.gender === 'M' ? 'Male' : (authUser.gender === 'F' ? 'Female' : (authUser.gender || data.profile.gender)),
+      dob: authUser.dob || authUser.dateOfBirth || data.profile.dob || '',
+      gender: authUser.gender === 'M' ? 'Male' : (authUser.gender === 'F' ? 'Female' : (authUser.gender || data.profile.gender || '')),
+      bloodGroup: authUser.bloodGroup || data.profile.bloodGroup || '',
       contact: {
         ...data.profile.contact,
-        phone: authUser.mobile || authUser.phone || data.profile.contact?.phone,
-        email: authUser.email || data.profile.contact?.email,
-        address: authUser.city || authUser.address || data.profile.contact?.address,
+        phone: authUser.mobile || authUser.phone || data.profile.contact?.phone || '',
+        email: authUser.email || data.profile.contact?.email || '',
+        address: authUser.city || authUser.address || data.profile.contact?.address || '',
         emergencyContactName: authUser.emergencyContactName || data.profile.contact?.emergencyContactName || '',
         emergencyContactRelation: authUser.emergencyContactRelation || data.profile.contact?.emergencyContactRelation || '',
         emergencyContactPhone: authUser.emergencyContactPhone || data.profile.contact?.emergencyContactPhone || '',
@@ -164,8 +172,8 @@ const mergeUserWithData = (data, authUser) => {
     },
     abha: {
       ...data.abha,
-      number: authUser.abhaNumber || data.abha.number,
-      phrAddress: authUser.abhaAddress || (authUser.phrAddress?.[0]) || data.abha.phrAddress,
+      number: authUser.abhaNumber || data.abha.number || '',
+      phrAddress: authUser.abhaAddress || (authUser.phrAddress?.[0]) || data.abha.phrAddress || '',
       verificationStatus: authUser.kycVerified ? 'Verified' : (authUser.abhaStatus || 'Linked'),
     },
   };
@@ -177,12 +185,10 @@ const read = async (req = null) => {
   if (req) {
     authUser = await resolveAuthUser(req);
   }
-  const userId = authUser ? (authUser._id?.toString() || authUser.userId) : 'user-1';
+  const userId = authUser ? (authUser._id?.toString() || authUser.userId) : null;
 
   let data;
-  if (!collection) {
-    data = await readMock();
-  } else {
+  if (userId && collection) {
     const stored = await collection.findOne({ _id: userId });
     if (stored) {
       const { _id: _, ...rest } = stored;
@@ -192,6 +198,10 @@ const read = async (req = null) => {
       data = copySeed();
       await collection.insertOne({ _id: userId, ...data, createdAt: new Date() });
     }
+  } else if (!collection) {
+    data = await readMock();
+  } else {
+    data = copySeed();
   }
 
   if (authUser) {

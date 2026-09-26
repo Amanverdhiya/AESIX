@@ -393,7 +393,12 @@ export default function BasicInfo() {
                   <button className="sih-profile-dropdown-item" onClick={() => { navigate('/profile'); setProfileOpen(false); }}>
                     <span className="dd-icon"><CircleUser /></span> Profile
                   </button>
-                  <button className="sih-profile-dropdown-item danger" onClick={() => setProfileOpen(false)}>
+                  <button className="sih-profile-dropdown-item danger" onClick={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user_profile');
+                    setProfileOpen(false);
+                    navigate('/login');
+                  }}>
                     <span className="dd-icon"><LogOut /></span> Sign Out
                   </button>
                 </div>

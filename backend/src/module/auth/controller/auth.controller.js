@@ -28,7 +28,7 @@ function buildResponseProfile(user, profile = {}) {
   const city = user.city || profile.city || profile.address || profile.contact?.address || '';
 
   return {
-    id: user._id.toString(),
+    id: user._id ? user._id.toString() : user.userId,
     userId: user.userId,
     aadhaar: user.aadhaar || '',
     fullName,
@@ -47,9 +47,9 @@ function buildResponseProfile(user, profile = {}) {
     ABHANumber: abhaNum,
     abhaAddress: abhaAddr,
     phrAddress: abhaAddr,
-    emergencyContactName: user.emergencyContactName || 'Family Member',
-    emergencyContactRelation: user.emergencyContactRelation || 'Relative',
-    emergencyContactPhone: user.emergencyContactPhone || mobile || '',
+    emergencyContactName: user.emergencyContactName || '',
+    emergencyContactRelation: user.emergencyContactRelation || '',
+    emergencyContactPhone: user.emergencyContactPhone || '',
     abhaStatus: user.abhaStatus || profile.abhaStatus || 'ACTIVE',
     photoUrl: user.photoUrl || profile.photoUrl || profile.photo || null,
     bloodGroup: user.bloodGroup || profile.bloodGroup || '',
@@ -102,21 +102,23 @@ async function upsertUserFromProfile(profile, { aadhaar, mobile, loginMethod, ci
     }
   }
 
+  const isRegister = loginMethod === 'register';
+
   const updateFields = {
     ...(canSetAbha ? { abhaNumber: targetAbha } : {}),
     ...(aadhaar ? { aadhaar } : {}),
-    firstName: user?.firstName || profile.firstName,
-    lastName: user?.lastName !== undefined ? user.lastName : profile.lastName,
-    mobile: user?.mobile || mobile || profile.mobile,
-    gender: user?.gender || profile.gender,
-    dob: user?.dob || profile.dob,
-    abhaAddress: user?.abhaAddress || targetAbhaAddress,
-    abhaStatus: user?.abhaStatus || profile.abhaStatus,
-    kycVerified: user?.kycVerified ?? profile.kycVerified,
+    firstName: isRegister ? (profile.firstName || user?.firstName) : (user?.firstName || profile.firstName),
+    lastName: isRegister ? (profile.lastName !== undefined ? profile.lastName : user?.lastName) : (user?.lastName !== undefined ? user.lastName : profile.lastName),
+    mobile: isRegister ? (mobile || profile.mobile || user?.mobile) : (user?.mobile || mobile || profile.mobile),
+    gender: isRegister ? (profile.gender || user?.gender) : (user?.gender || profile.gender),
+    dob: isRegister ? (profile.dob || user?.dob) : (user?.dob || profile.dob),
+    abhaAddress: isRegister ? (targetAbhaAddress || user?.abhaAddress) : (user?.abhaAddress || targetAbhaAddress),
+    abhaStatus: profile.abhaStatus || user?.abhaStatus || 'ACTIVE',
+    kycVerified: profile.kycVerified ?? user?.kycVerified ?? true,
     loginMethod,
     ...(city ? { city } : profile.city ? { city: profile.city } : {}),
+    ...(isRegister ? { bloodGroup: '', emergencyContactName: '', emergencyContactRelation: '', emergencyContactPhone: '', photoUrl: null } : {}),
   };
-
 
   if (user) {
     user = await User.findByIdAndUpdate(
@@ -151,6 +153,57 @@ async function upsertUserFromProfile(profile, { aadhaar, mobile, loginMethod, ci
     );
   } catch (err) {
     logger.warn(`Failed to sync user module database record: ${err.message}`);
+  }
+
+  // If registering, reset/initialize clean user profile record in user_profiles collection
+  if (isRegister) {
+    try {
+      const mongoose = (await import('mongoose')).default;
+      if (mongoose.connection?.readyState === 1) {
+        const profileCol = mongoose.connection.db.collection('user_profiles');
+        const emptyCleanProfile = {
+          profile: {
+            id: user._id.toString(),
+            name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User',
+            dob: user.dob || '',
+            gender: user.gender === 'M' ? 'Male' : (user.gender === 'F' ? 'Female' : (user.gender || '')),
+            bloodGroup: '',
+            maritalStatus: '',
+            occupation: '',
+            primaryLanguage: 'English',
+            contact: {
+              phone: user.mobile || '',
+              email: user.email || '',
+              address: user.city || '',
+              emergencyContactName: '',
+              emergencyContactRelation: '',
+              emergencyContactPhone: '',
+            },
+            medications: [],
+            allergies: [],
+            conditions: [],
+            criticalAlerts: [],
+          },
+          abha: {
+            number: user.abhaNumber || '',
+            phrAddress: user.abhaAddress || '',
+            verificationStatus: 'Verified',
+            issuedDate: new Date().toISOString(),
+          },
+          consents: [],
+          documents: [],
+          updatedAt: new Date(),
+        };
+
+        await profileCol.replaceOne(
+          { _id: user._id.toString() },
+          { _id: user._id.toString(), ...emptyCleanProfile },
+          { upsert: true }
+        );
+      }
+    } catch (cleanErr) {
+      logger.warn(`Could not initialize clean user_profiles doc: ${cleanErr.message}`);
+    }
   }
 
   return user;

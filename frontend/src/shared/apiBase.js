@@ -31,10 +31,22 @@ function pageOnLoopback() {
   return LOOPBACKS.has(window.location.hostname);
 }
 
+function normalizeApiUrl(raw) {
+  if (!raw) return '/api';
+  const clean = raw.trim().replace(/\/+$/, '');
+  if (!clean || clean === '/api') return '/api';
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  }
+  return clean.startsWith('/') ? clean : `/${clean}`;
+}
+
 export function getApiBase() {
   try {
-    const override = (localStorage.getItem('mediksha_api_base') || '').trim().replace(/\/$/, '');
-    if (override) return override;
+    const override = localStorage.getItem('mediksha_api_base');
+    if (override && override.trim()) {
+      return normalizeApiUrl(override);
+    }
   } catch {
     /* private-mode storage — ignore */
   }
@@ -42,7 +54,7 @@ export function getApiBase() {
     if (LOOPBACKS.has(hostOf(CONFIGURED)) && !pageOnLoopback()) {
       return '/api';
     }
-    return CONFIGURED;
+    return normalizeApiUrl(CONFIGURED);
   }
   return '/api';
 }

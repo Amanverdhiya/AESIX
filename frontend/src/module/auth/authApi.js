@@ -1,6 +1,7 @@
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { getApiBase } from '../../shared/apiBase';
 
 async function authRequest(path, options = {}) {
+  const baseUrl = getApiBase();
   const response = await fetch(`${baseUrl}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,

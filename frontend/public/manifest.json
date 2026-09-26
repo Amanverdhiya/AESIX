@@ -4,7 +4,7 @@
   "description": "MedIksha - Healthcare Dashboard Web Application",
   "start_url": "/",
   "id": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#F5FAF8",
   "theme_color": "#2F8F83",

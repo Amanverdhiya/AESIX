@@ -1,4 +1,12 @@
 {
+  "name": "aesix-monorepo",
+  "private": true,
+  "scripts": {
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "start:backend": "cd backend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "mongoose": "^9.10.0",

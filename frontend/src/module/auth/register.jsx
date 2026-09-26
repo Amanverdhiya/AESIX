@@ -135,6 +135,9 @@ export default function Register() {
     const fullName = `${firstName} ${lastName}`.trim();
 
     try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_profile');
+
       const payload = {
         txnId,
         aadhaar: rawAadhaar,

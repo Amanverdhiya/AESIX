@@ -1,4 +1,4 @@
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import { fetchApi } from '../../../shared/apiBase';
 
 async function request(path, options = {}) {
   const { timeoutMs = 10000, signal: externalSignal, ...fetchOptions } = options;
@@ -11,7 +11,7 @@ async function request(path, options = {}) {
   }
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetchApi(path, {
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',

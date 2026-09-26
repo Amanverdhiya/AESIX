@@ -144,6 +144,8 @@ export default function Login() {
       }
 
       if (res.tokens?.token) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_profile');
         localStorage.setItem('token', res.tokens.token);
         if (res.profile) {
           localStorage.setItem('user_profile', JSON.stringify(res.profile));
@@ -163,6 +165,8 @@ export default function Login() {
     try {
       const res = await authApi.verifyUserAbha(txnId, abhaNumber);
       if (res.tokens?.token) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_profile');
         localStorage.setItem('token', res.tokens.token);
         if (res.profile) {
           localStorage.setItem('user_profile', JSON.stringify(res.profile));

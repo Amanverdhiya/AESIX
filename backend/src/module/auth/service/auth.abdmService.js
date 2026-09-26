@@ -6,10 +6,15 @@ import { buildAbdmHeaders } from '../../../shared/utils/abdmHeader.js';
 import { logger } from '../../../shared/logger.js';
 
 // ─── MOCK RESPONSES ───────────────────────────────────────────────────────────
+import { randomUUID } from 'crypto';
+
 const MOCK = {
   requestOTP: () => ({ txnId: `mock-txn-${Date.now()}` }),
 
   verifyOTP: ({ scope }) => {
+    const uniqueToken = `mock-token-${Date.now()}-${randomUUID()}`;
+    const uniqueRefresh = `mock-refresh-${Date.now()}-${randomUUID()}`;
+
     if (scope === 'abha-enrol') {
       return {
         ABHAProfile: {
@@ -23,8 +28,8 @@ const MOCK = {
           phrAddress: ['mock@sbx'],
         },
         tokens: {
-          token: 'mock-x-token',
-          refreshToken: 'mock-refresh',
+          token: uniqueToken,
+          refreshToken: uniqueRefresh,
           expiresIn: 1800,
         },
       };
@@ -44,8 +49,8 @@ const MOCK = {
         kycVerified: true,
       },
       tokens: {
-        token: 'mock-x-token',
-        refreshToken: 'mock-refresh',
+        token: uniqueToken,
+        refreshToken: uniqueRefresh,
         expiresIn: 1800,
       },
       abhaProfiles: [],
@@ -61,31 +66,32 @@ const MOCK = {
       gender: 'M',
     },
     tokens: {
-      token: 'mock-x-token',
-      refreshToken: 'mock-refresh',
+      token: `mock-token-${Date.now()}-${randomUUID()}`,
+      refreshToken: `mock-refresh-${Date.now()}-${randomUUID()}`,
       expiresIn: 1800,
     },
   }),
 
   enrollByAadhaar: ({ name, mobile, gender, dob }) => {
-    const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
-    const genderCode = { MALE: 'M', FEMALE: 'F', OTHER: 'O' }[gender] || gender;
+    const [firstName, ...lastNameParts] = (name || '').trim().split(/\s+/);
+    const genderCode = { MALE: 'M', FEMALE: 'F', OTHER: 'O' }[gender] || gender || 'M';
     const abhaSuffix = String(Date.now()).slice(-8);
+    const cleanFirstName = (firstName || 'user').toLowerCase().replace(/[^a-z0-9]/g, '');
 
     return {
       ABHAProfile: {
         ABHANumber: `91-${abhaSuffix.slice(0, 4)}-${abhaSuffix.slice(4)}-0001`,
-        firstName,
+        firstName: firstName || 'User',
         lastName: lastNameParts.join(' '),
-        dob,
+        dob: dob || '',
         gender: genderCode,
-        mobile,
+        mobile: mobile || '',
         abhaStatus: 'ACTIVE',
-        phrAddress: [`${firstName.toLowerCase()}@sbx`],
+        phrAddress: [`${cleanFirstName}${abhaSuffix.slice(-4)}@sbx`],
       },
       tokens: {
-        token: 'mock-x-token',
-        refreshToken: 'mock-refresh',
+        token: `mock-token-${Date.now()}-${randomUUID()}`,
+        refreshToken: `mock-refresh-${Date.now()}-${randomUUID()}`,
         expiresIn: 1800,
       },
     };

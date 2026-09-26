@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: aesix-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 5001
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: aesix
+      - key: GROQ_ENDPOINT
+        value: https://api.groq.com/openai/v1/chat/completions
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: ICD_CLIENT_ID
+        sync: false
+      - key: ICD_CLIENT_SECRET
+        sync: false
+      - key: TOKEN_URL
+        value: https://icdaccessmanagement.who.int/connect/token
+      - key: API_BASE
+        value: https://id.who.int/icd/release/11/2024-01/mms
