@@ -6,7 +6,49 @@
 
 ### Secure Medical Document Management Platform
 
-<img src="https://skillicons.dev/icons?i=react,vite,nodejs,express,mongodb,js,git,github,vscode,figma&theme=dark" />
+<table>
+<tr>
+<td align="center">
+<img src="https://skillicons.dev/icons?i=vercel" width="55"/><br>
+<b>Frontend</b><br>
+Vercel
+</td>
+
+<td align="center">
+<img src="https://skillicons.dev/icons?i=render" width="55"/><br>
+<b>Backend</b><br>
+Render
+</td>
+
+<td align="center">
+<img src="https://skillicons.dev/icons?i=mongodb" width="55"/><br>
+<b>Database</b><br>
+MongoDB Atlas
+</td>
+
+<td align="center">
+<img src="https://skillicons.dev/icons?i=react" width="55"/><br>
+<b>React</b><br>
+19.x
+</td>
+
+<td align="center">
+<img src="https://skillicons.dev/icons?i=vite" width="55"/><br>
+<b>Bundler</b><br>
+Vite 8
+</td>
+
+<td align="center">
+<img src="https://skillicons.dev/icons?i=nodejs,express" width="55"/><br>
+<b>Backend</b><br>
+Node.js + Express
+</td>
+</tr>
+</table>
+
+<br>
+
+<img src="https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-FF6B00?style=for-the-badge" />
 
 </div>
 
