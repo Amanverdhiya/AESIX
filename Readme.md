@@ -1,12 +1,42 @@
 # AESIX (Mediksha) — Unified Healthcare & Clinical Intelligence Platform
 
-[![Vercel](https://img.shields.io/badge/Frontend-Vercel-black?style=flat&logo=vercel)](https://vercel.com)
-[![Render](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat&logo=render)](https://render.com)
-[![MongoDB Atlas](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=flat&logo=mongodb)](https://www.mongodb.com/atlas)
-[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat&logo=react)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Bundler-Vite%208-646CFF?style=flat&logo=vite)](https://vitejs.dev)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js%20Express-339933?style=flat&logo=node.js)](https://nodejs.org)
-[![ABDM](https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-orange)](https://abdm.gov.in)
+<div align="center">
+
+# 🏥 HealthCare Portal
+
+### Secure Medical Document Management Platform
+
+<p>
+  <a href="https://vercel.com">
+    <img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
+  </a>
+
+  <a href="https://render.com">
+    <img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" />
+  </a>
+
+  <a href="https://www.mongodb.com/atlas">
+    <img src="https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  </a>
+
+  <a href="https://react.dev">
+    <img src="https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  </a>
+
+  <a href="https://vitejs.dev">
+    <img src="https://img.shields.io/badge/Bundler-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  </a>
+
+  <a href="https://nodejs.org">
+    <img src="https://img.shields.io/badge/Backend-Node.js%20Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+  </a>
+
+  <a href="https://abdm.gov.in">
+    <img src="https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-FF6B00?style=for-the-badge" />
+  </a>
+</p>
+
+</div>
 
 **AESIX (Mediksha)** is a next-generation healthcare platform integrating **Ayushman Bharat Digital Mission (ABDM)** standards, **WHO ICD-11** disease coding, **Ayush NAMASTE** terminology dual-coding, structured **SOCRATES clinical symptom analytics**, consent-driven Doctor-Patient data sharing, live hospital geolocation radar, and an intelligent **Multilingual GenAI Medical Assistant**.
 
