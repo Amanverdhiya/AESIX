@@ -1,3 +1,4 @@
+import '../../../shared/config.js';
 import { logError } from '../../../shared/logger.js';
 
 /**
@@ -396,6 +397,67 @@ MEDICAL SYMPTOM RULES:
 3. Never ask for pain location/position.`;
 };
 
+function getContextualFallback(userMessage = '', effectiveLanguage = 'en', greeting = false, directionIntent = false) {
+  const lower = userMessage.toLowerCase();
+
+  if (greeting) {
+    if (effectiveLanguage === 'hi') {
+      return 'नमस्ते! मैं आपका एआई मेडिकल असिस्टेंट हूँ। आज मैं आपके स्वास्थ्य, लक्षणों या प्लेटफ़ॉर्म नेविगेशन में आपकी क्या सहायता कर सकता हूँ?';
+    }
+    if (effectiveLanguage === 'bn') {
+      return 'হ্যালো! আমি আপনার এআই মেডিকেল অ্যাসিস্ট্যান্ট। আজ আপনার স্বাস্থ্য, উপসর্গ বা প্ল্যাটফর্ম নেভিগেশনে কীভাবে সাহায্য করতে পারি?';
+    }
+    if (effectiveLanguage === 'ta') {
+      return 'வணக்கம்! நான் உங்கள் AI மருத்துவ உதவியாளர். இன்று உங்கள் உடல்நலம், அறிகுறிகள் அல்லது பிளாட்ஃபார்ம் வழிகாட்டுதலில் நான் எவ்வாறு உதவ முடியும்?';
+    }
+    return 'Hello! I am your AI Medical Assistant. How can I assist you with your health symptoms or finding features on the platform today?';
+  }
+
+  if (directionIntent) {
+    return getRedirectMessage(effectiveLanguage);
+  }
+
+  if (lower.includes('headache') || lower.includes('सिरदर्द') || lower.includes('migraine')) {
+    if (effectiveLanguage === 'hi') {
+      return 'सिरदर्द के लिए: कृपया शांत वातावरण में विश्राम करें और पर्याप्त पानी पिएं। यह सिरदर्द कब से है, और क्या आपको मतली, चक्कर या रोशनी से संवेदनशीलता महसूस हो रही है? आप [Socrates Form](/socrates) पर भी अपने लक्षण दर्ज कर सकते हैं।';
+    }
+    return 'I understand you are experiencing a headache. To help guide you better: How long have you had this headache, and is it a sharp or dull throbbing pain? Are you also having any fever, nausea, or light sensitivity? You can also log your symptoms in the [Socrates Symptom Form](/socrates).';
+  }
+
+  if (lower.includes('fever') || lower.includes('बुखार') || lower.includes('temperature')) {
+    if (effectiveLanguage === 'hi') {
+      return 'बुखार के लिए: अपना तापमान मापें, पर्याप्त विश्राम करें और पानी पिएं। क्या आपको ठंड, खांसी या शरीर में दर्द भी महसूस हो रहा है? यदि बुखार अधिक है या बना रहता है, तो कृपया डॉक्टर से सलाह लें।';
+    }
+    return 'I understand you are feeling feverish. Please monitor your body temperature, rest comfortably, and stay hydrated. Do you also have chills, cough, or body aches? If your fever is high or persistent, please consult a medical doctor.';
+  }
+
+  if (lower.includes('stomach') || lower.includes('पेट') || lower.includes('belly') || lower.includes('acid')) {
+    if (effectiveLanguage === 'hi') {
+      return 'पेट की समस्या के लिए: हल्का भोजन लें और मसालेदार खाने से बचें। क्या आपको पेट में दर्द, गैस, मतली या कब्ज की शिकायत है?';
+    }
+    return 'I notice you mentioned stomach discomfort. Please consider light meals and hydration. Are you experiencing abdominal pain, acidity, nausea, or bloating?';
+  }
+
+  if (lower.includes('cough') || lower.includes('खांसी') || lower.includes('cold')) {
+    if (effectiveLanguage === 'hi') {
+      return 'खांसी और सर्दी के लिए: गुनगुना पानी पिएं और पर्याप्त विश्राम करें। क्या आपकी खांसी सूखी है या बलगम आ रहा है? सांस लेने में कोई परेशानी है?';
+    }
+    return 'For cough and cold: Try drinking warm fluids and resting. Is it a dry cough or with phlegm, and are you experiencing any difficulty breathing?';
+  }
+
+  if (effectiveLanguage === 'hi') {
+    return 'नमस्ते! मैं आपका एआई मेडिकल असिस्टेंट हूँ। आपके द्वारा बताए गए स्वास्थ्य विषय के संबंध में: कृपया अपने लक्षणों के बारे में थोड़ा और विस्तार से बताएं (जैसे कि यह कब शुरू हुआ और कितना तीव्र है), ताकि मैं सही मार्गदर्शन कर सकूं।';
+  }
+  if (effectiveLanguage === 'bn') {
+    return 'হ্যালো! আমি আপনার এআই মেডিকেল অ্যাসিস্ট্যান্ট। অনুগ্রহ করে আপনার লক্ষণসমূহ সম্পর্কে আরও কিছু তথ্য জানান (যেমন কতদিন ধরে সমস্যা হচ্ছে), যাতে আমি আপনাকে সঠিক নির্দেশনা প্রদান করতে পারি।';
+  }
+  if (effectiveLanguage === 'ta') {
+    return 'வணக்கம்! நான் உங்கள் AI மருத்துவ உதவியாளர். உங்கள் அறிகுறிகளைப் பற்றி மேலும் சில விவரங்களைப் பகிரவும், அதனால் நான் உங்களுக்குச் சரியான வழிகாட்டலை வழங்க முடியும்.';
+  }
+
+  return 'Hello! I am your AI Medical Assistant. Based on your symptoms, please describe how long you have felt this way and any specific discomfort you are having so I can assist you effectively. You can also use our [Socrates Form](/socrates) to log your clinical details.';
+}
+
 // ────────────────────────────────────────────────────────────────
 // 7. MAIN ENTRY POINT
 // ────────────────────────────────────────────────────────────────
@@ -441,16 +503,14 @@ export const analyzeWithAi = async (userMessage, history = [], language = 'en') 
 
   const groqEndpoint = process.env.GROQ_ENDPOINT || 'https://api.groq.com/openai/v1/chat/completions';
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+  const primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
-  if (!apiKey) {
-    throw new Error('GROQ_API_KEY is not configured.');
-  }
-
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${apiKey}`,
-  };
+  const candidateModels = [
+    primaryModel,
+    'openai/gpt-oss-120b',
+    'openai/gpt-oss-20b',
+    'qwen/qwen3.8-27b',
+  ].filter((m, i, arr) => m && arr.indexOf(m) === i);
 
   const reminderParts = [];
   if (detectedLang === 'other') {
@@ -505,79 +565,91 @@ export const analyzeWithAi = async (userMessage, history = [], language = 'en') 
     { role: 'user', content: userMessage },
   ];
 
+  if (!apiKey) {
+    console.warn('[medicalGenAiService] GROQ_API_KEY is not configured. Returning contextual fallback.');
+    return getContextualFallback(userMessage, effectiveLanguage, greeting, directionIntent);
+  }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${apiKey}`,
+  };
+
   console.log('[medicalGenAiService] CALLING LLM (medical context detected)', {
     effectiveLanguage,
     greeting,
     activeHistory,
     offTopic,
+    modelsToTry: candidateModels,
   });
 
-  try {
-    const response = await fetch(groqEndpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        model,
-        messages: allMessages,
-        temperature: 0.6,
-      }),
-    });
+  let aiReply = null;
+  let lastError = null;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorDetail = response.statusText;
-      try {
-        const parsed = JSON.parse(errorText);
-        errorDetail = parsed.error?.message || errorText;
-      } catch {
-        errorDetail = errorText;
+  for (const currentModel of candidateModels) {
+    try {
+      const response = await fetch(groqEndpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: currentModel,
+          messages: allMessages,
+          temperature: 0.6,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorDetail = response.statusText;
+        try {
+          const parsed = JSON.parse(errorText);
+          errorDetail = parsed.error?.message || errorText;
+        } catch {
+          errorDetail = errorText;
+        }
+        throw new Error(`Groq API error (${response.status}) [${currentModel}]: ${errorDetail}`);
       }
-      throw new Error(`Groq API error (${response.status}): ${errorDetail}`);
+
+      const data = await response.json();
+      aiReply =
+        data.choices?.[0]?.message?.content ||
+        data.message?.content ||
+        data.response ||
+        (typeof data === 'string' ? data : JSON.stringify(data));
+
+      if (aiReply && aiReply.trim().length > 0) {
+        console.log(`[medicalGenAiService] Successfully generated reply using model: ${currentModel}`);
+        break;
+      }
+    } catch (err) {
+      lastError = err;
+      console.warn(`[medicalGenAiService] Model '${currentModel}' failed: ${err.message}. Trying next candidate...`);
     }
-
-    const data = await response.json();
-
-    let aiReply =
-      data.choices?.[0]?.message?.content ||
-      data.message?.content ||
-      data.response ||
-      (typeof data === 'string' ? data : JSON.stringify(data));
-
-    if (offTopic) {
-      aiReply = stripCodeBlocks(aiReply);
-    }
-
-    if (looksLikeWrongLanguage(aiReply, effectiveLanguage)) {
-      aiReply = getRedirectMessage(effectiveLanguage) +
-        (effectiveLanguage === 'hi'
-          ? ' कृपया अपने लक्षण दोबारा बताएं।'
-          : effectiveLanguage === 'bn'
-          ? ' অনুগ্রহ করে আপনার লক্ষণগুলো আবার বলুন।'
-          : effectiveLanguage === 'ta'
-          ? ' தயவுசெய்து உங்கள் அறிகுறிகளை மீண்டும் கூறவும்.'
-          : ' Could you tell me more about your symptoms?');
-    }
-
-    return aiReply;
-  } catch (error) {
-    console.error('Error connecting to Groq API:', error.message);
-    logError(error, { service: 'analyzeWithAi', groqEndpoint, model });
-
-    // Fallback response when Groq API Key is invalid (401) or unreachable
-    if (directionIntent) {
-      return getRedirectMessage(effectiveLanguage);
-    }
-
-    if (effectiveLanguage === 'hi') {
-      return `नमस्ते! मैं आपका एआई मेडिकल असिस्टेंट हूँ। आपके लक्षणों के आधार पर, कृपया पर्याप्त पानी पिएं, विश्राम करें और अपनी स्थिति पर नज़र रखें। यदि आपकी समस्या गंभीर है या तकलीफ बढ़ती है, तो कृपया तुरंत किसी योग्य डॉक्टर से परामर्श लें।`;
-    }
-    if (effectiveLanguage === 'bn') {
-      return `হ্যালো! আমি আপনার এআই মেডিকেল অ্যাসিস্ট্যান্ট। আপনার লক্ষণের উপর ভিত্তি করে, অনুগ্রহ করে পর্যাপ্ত পানি পান করুন, বিশ্রাম নিন এবং পর্যবেক্ষণ করুন। শারীরিক অস্বস্তি বা সমস্যা বৃদ্ধি পেলে অবিলম্বে একজন অভিজ্ঞ ডাক্তারের পরামর্শ নিন।`;
-    }
-    if (effectiveLanguage === 'ta') {
-      return `வணக்கம்! நான் உங்கள் AI மருத்துவ உதவியாளர். உங்கள் அறிகுறிகளின் அடிப்படையில், தயவுசெய்து போதுமான தண்ணீர் குடித்து, ஓய்வெடுத்து உங்கள் உடல்நிலையைக் கவனியுங்கள். வலி அல்லது அசௌகரியம் அதிகரித்தால் உடனடியாக மருத்துவரை அணுகவும்.`;
-    }
-
-    return `Hello! I am your AI Medical Assistant. Based on your symptoms, please stay hydrated, rest comfortably, and monitor your health carefully. If your symptoms escalate or cause severe discomfort, please consult a qualified healthcare professional immediately.`;
   }
+
+  if (!aiReply) {
+    console.error('All Groq candidate models failed. Last error:', lastError?.message);
+    if (lastError) {
+      logError(lastError, { service: 'analyzeWithAi', groqEndpoint, candidateModels });
+    }
+    return getContextualFallback(userMessage, effectiveLanguage, greeting, directionIntent);
+  }
+
+  if (offTopic) {
+    aiReply = stripCodeBlocks(aiReply);
+  }
+
+  if (looksLikeWrongLanguage(aiReply, effectiveLanguage)) {
+    aiReply =
+      getRedirectMessage(effectiveLanguage) +
+      (effectiveLanguage === 'hi'
+        ? ' कृपया अपने लक्षण दोबारा बताएं।'
+        : effectiveLanguage === 'bn'
+        ? ' অনুগ্রহ করে আপনার लक्षणগুলো আবার বলুন।'
+        : effectiveLanguage === 'ta'
+        ? ' தயவுசெய்து உங்கள் அறிகுறிகளை மீண்டும் கூறவும்.'
+        : ' Could you tell me more about your symptoms?');
+  }
+
+  return aiReply;
 };
