@@ -6,19 +6,7 @@
 
 ### Secure Medical Document Management Platform
 
-<img src="https://img.shields.io/badge/Frontend-Vercel-000?style=for-the-badge&logo=vercel&logoColor=white" />
-<img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" />
-<img src="https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
-
-<br/>
-
-<img src="https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
-<img src="https://img.shields.io/badge/Bundler-Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
-<img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
-
-<br/>
-
-<img src="https://img.shields.io/badge/ABDM-Ayushman%20Bharat%20Compliant-FF6B00?style=for-the-badge" />
+<img src="https://skillicons.dev/icons?i=html,css,js,react,nodejs,express,mongodb,vite,git,github,vscode,tailwind,figma&theme=dark" />
 
 </div>
 
