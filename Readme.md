@@ -6,7 +6,7 @@
 
 ### Secure Medical Document Management Platform
 
-<img src="https://skillicons.dev/icons?i=html,css,js,react,nodejs,express,mongodb,vite,git,github,vscode,tailwind,figma&theme=dark" />
+<img src="https://skillicons.dev/icons?i=react,vite,nodejs,express,mongodb,js,git,github,vscode,figma&theme=dark" />
 
 </div>
 
